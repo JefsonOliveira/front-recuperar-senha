@@ -1,24 +1,44 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
+import { useParams } from 'react-router-dom';
 import '../../styles.css';
 
 function Login() {
     const [formInputOne, setFormInputOne] = useState("");
     const [formInputTwo, setFormInputTwo] = useState("");
     const [type, setType] = useState('password');
-    const [typeConfirm, setTypeConfirm] = useState('password');
+		const [typeConfirm, setTypeConfirm] = useState('password');
+	
+		const { id } = useParams()
   
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
       e.preventDefault();
   
       if (formInputOne === "" || formInputTwo === "") {
         alert("Os campos precisam ser preenchidos")
       }
       else if (formInputOne === formInputTwo) {
-        alert("sucesso");
-        window.location.href = "/confirm"
-        setFormInputOne("");
-        setFormInputTwo("");
+				const json = {
+					password: formInputOne,
+					passwordConfirmation: formInputTwo,
+					key: id
+				}
+
+				await axios.put('http://localhost:3333/user/forgot-password', json)
+				.then(response => {
+					if (response.data) {
+						setFormInputOne("");
+						setFormInputTwo("");
+						window.location.href = "/confirm"
+					} else {
+						alert("Não foi possivel mudar a senha!");
+					}
+				})
+				.catch(error => {
+					console.warn(error)
+					alert('Houve um erro interno.')
+				})
       } else {
         alert("As senhas são diferentes.");
       }
@@ -48,7 +68,7 @@ function Login() {
               {typeConfirm === 'password' ? <BsEyeSlash size={25} color="#000" /> : <BsEye size={25} color="#000" />}
             </button>
           </div>
-          <button type="submit" className="submit">toSave</button>
+          <button type="submit" className="submit">Salvar</button>
         </form>
       </div>
     );

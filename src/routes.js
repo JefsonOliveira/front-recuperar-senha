@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" exact element={<Login/>} />
+      <Route path="/:id" exact element={<Login/>} />
       <Route path="/confirm" exact element={<Confirm/>} />
     </Routes>
   );
